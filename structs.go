@@ -152,3 +152,55 @@ type Achievement struct {
 	Target int // Value you need to reach to complete the achievement
 	Info   string
 }
+
+// PlayerBattle represents a match a player participated in.
+type PlayerBattle struct {
+	Type           string
+	ChallengeType  string
+	Mode           BattleMode
+	WinCountBefore int
+	UTCTime        int
+	DeckType       string
+	TeamSize       int
+
+	// Winner = TeamCrowns - OpponentCrowns
+	// 0        => tie
+	// positive => player won
+	// negative => opponent won
+	Winner int
+
+	TeamCrowns     int
+	OpponentCrowns int
+	Team           []TeamMember
+	Opponent       []TeamMember
+	Arena          Arena
+}
+
+// BattleMode represents info on the type of battle.
+type BattleMode struct {
+	Name            string
+	Deck            string
+	CardLevels      string
+	OvertimeSeconds int
+	Players         string
+	SameDeck        bool
+}
+
+// TeamMember represents a member of a side within a PlayerBattle
+type TeamMember struct {
+	Tag           string
+	Name          string
+	CrownsEarned  int
+	TrophyChange  int
+	StartTrophies int
+	Clan          TeamClan
+	DeckLink      string
+	Deck          []Card
+}
+
+// TeamClan represents basic info on a clan within the game.
+type TeamClan struct {
+	Tag   string
+	Name  string
+	Badge Badge
+}
