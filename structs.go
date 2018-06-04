@@ -204,3 +204,64 @@ type TeamClan struct {
 	Name  string
 	Badge Badge
 }
+
+// ClanSearch represents a clan received from the clan search endpoint.
+type ClanSearch struct {
+	Tag           string
+	Name          string
+	Type          string
+	Score         int
+	MemberCount   int
+	RequiredScore int
+	Donations     int
+	Badge         Badge
+	Location      Location
+}
+
+// Location represents a country.
+type Location struct {
+	Name      string
+	IsCountry bool
+	Code      string
+}
+
+// Clan represents a clan recieved directly from the clan endpoint.
+type Clan struct {
+	Tag           string
+	Name          string
+	Description   string
+	Type          string
+	Score         int
+	MemberCount   int
+	RequiredScore int
+	Donations     int
+	ClanChest     ClanChest
+	Badge         Badge
+	Location      Location
+	Members       []ClanMember
+}
+
+// ClanChest is no longer in the game but the API lists it so it is here for completion's sake.
+type ClanChest struct {
+	Status   string
+	Crowns   int
+	Level    int
+	MaxLevel int
+}
+
+// ClanMember represents a player inside of a clan received directly from the clan endpoint.
+type ClanMember struct {
+	Name              string
+	Tag               string
+	Rank              int // Player's ranking within the clan
+	PreviousRank      int
+	Role              string
+	EXPLevel          int
+	Trophies          int
+	ClanChestCrowns   int
+	Donations         int
+	DonationsReceived int
+	DonationsDelta    int
+	DonationsPercent  float64
+	Arena             Arena
+}
