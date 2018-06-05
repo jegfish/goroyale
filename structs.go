@@ -310,3 +310,30 @@ type ClanWarLogClan struct {
 	ClanWarClan
 	WarTrophiesChange int
 }
+
+// ClanHistoryEntry represents a value of a key in the object returned from the clan history endpoint.
+// https://docs.royaleapi.com/#/endpoints/clan_history
+type ClanHistoryEntry struct {
+	Donations   int
+	MemberCount int
+	Members     []ClanHistoryMember
+}
+
+// ClanHistoryMember represents a member of a clan within the clan history endpoint.
+type ClanHistoryMember struct {
+	ClanRank  int
+	Crowns    int
+	Donations int
+	Name      string
+	Tag       string
+	Trophies  int
+}
+
+// ClanTracking represents basic info on whether a clan is tracked by the API.
+// https://docs.royaleapi.com/#/endpoints/clan_tracking
+type ClanTracking struct {
+	Tag           string
+	Active        bool
+	Available     bool
+	SnapshotCount int
+}
