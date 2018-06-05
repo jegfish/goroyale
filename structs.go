@@ -296,3 +296,17 @@ type ClanWarParticipant struct {
 	BattlesPlayed int
 	Wins          int
 }
+
+// ClanWarLog represents a clan war returned from the clan warlog endpoint
+type ClanWarLog struct {
+	CreatedDate  int
+	Participants []ClanWarParticipant
+	Standings    []ClanWarLogClan
+	SeasonNumber int
+}
+
+// ClanWarLogClan represents a clan that participated in a clan war returned from the clan warlog endpoint.
+type ClanWarLogClan struct {
+	ClanWarClan
+	WarTrophiesChange int
+}
