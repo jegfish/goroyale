@@ -337,3 +337,43 @@ type ClanTracking struct {
 	Available     bool
 	SnapshotCount int
 }
+
+// OpenTournament is an open tournament.
+// https://docs.royaleapi.com/#/endpoints/tournaments_open
+type OpenTournament struct {
+	Tag                 string
+	Type                string
+	Status              string
+	Name                string
+	Capacity            int
+	PlayerCount         int
+	MaxCapacity         int
+	PreparationDuration int
+	Duration            int
+	CreateTime          int
+	StartTime           int
+	EndTime             int
+}
+
+// KnownTournament is a tournament someone has already searched for.
+// https://docs.royaleapi.com/#/endpoints/tournaments_known
+type KnownTournament struct {
+	OpenTournament
+}
+
+// Tournament represents a specific tournament with extra info included.
+// https://docs.royaleapi.com/#/endpoints/tournaments_known
+type Tournament struct {
+	OpenTournament
+
+	Description string
+	Creator     TournamentMember
+	Members     []TournamentMember
+}
+
+// TournamentMember represents a member who participated in a tournament.
+type TournamentMember struct {
+	Tag   string
+	Name  string
+	Score int
+}
