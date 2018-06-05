@@ -153,8 +153,8 @@ type Achievement struct {
 	Info   string
 }
 
-// PlayerBattle represents a match a player participated in.
-type PlayerBattle struct {
+// Battle represents a match played.
+type Battle struct {
 	Type           string
 	ChallengeType  string
 	Mode           BattleMode
