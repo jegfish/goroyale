@@ -265,3 +265,34 @@ type ClanMember struct {
 	DonationsPercent  float64
 	Arena             Arena
 }
+
+// ClanWar represents a war a clan participated/is participating in.
+type ClanWar struct {
+	State             string
+	WarEndTime        int
+	CollectionEndTime int
+	Clan              ClanWarClan
+	Participants      []ClanWarParticipant
+	Standings         []ClanWarClan
+}
+
+// ClanWarClan represents the clan that was queried for when getting a ClanWar.
+type ClanWarClan struct {
+	Tag           string
+	Name          string
+	Participants  int
+	BattlesPlayed int
+	Wins          int
+	Crowns        int
+	WarTrophies   int
+	Badge         Badge
+}
+
+// ClanWarParticipant represents a player who was a member of a clan war.
+type ClanWarParticipant struct {
+	Tag           string
+	Name          string
+	CardsEarned   int
+	BattlesPlayed int
+	Wins          int
+}
