@@ -377,3 +377,30 @@ type TournamentMember struct {
 	Name  string
 	Score int
 }
+
+// TopClan is a clan from the leaderboards.
+// https://docs.royaleapi.com/#/endpoints/top_clans
+type TopClan struct {
+	Tag          string
+	Name         string
+	Score        int
+	MemberCount  int
+	Rank         int
+	PreviousRank int
+	Badge        Badge
+	Location     Location
+}
+
+// TopPlayer is a player from the leaderboards.
+// https://docs.royaleapi.com/#/endpoints/top_players
+type TopPlayer struct {
+	Name           string
+	Tag            string
+	Rank           int
+	PreviousRank   int
+	EXPLevel       int
+	Trophies       int
+	DonationsDelta int
+	Clan           TeamClan
+	Arena          Arena
+}
