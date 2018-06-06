@@ -329,13 +329,20 @@ type ClanHistoryMember struct {
 	Trophies  int
 }
 
-// ClanTracking represents basic info on whether a clan is tracked by the API.
+// Tracking represents info on if a clan is tracked by the API or not.
 // https://docs.royaleapi.com/#/endpoints/clan_tracking
-type ClanTracking struct {
-	Tag           string
+type Tracking struct {
 	Active        bool
 	Available     bool
 	SnapshotCount int
+}
+
+// ClanTracking represents basic info on whether a clan is tracked by the API.
+// https://docs.royaleapi.com/#/endpoints/clan_tracking
+type ClanTracking struct {
+	Tracking
+
+	Tag string
 }
 
 // OpenTournament is an open tournament.
@@ -403,4 +410,89 @@ type TopPlayer struct {
 	DonationsDelta int
 	Clan           TeamClan
 	Arena          Arena
+}
+
+// Popularity represents how popular an item is.
+type Popularity struct {
+	Hits          string
+	HitsPerDayAvg float64
+}
+
+// PopularClan represents data on how often a clan has been requested from the API.
+// https://docs.royaleapi.com/#/endpoints/popular_clans
+type PopularClan struct {
+	Popularity    Popularity
+	Tag           string
+	Name          string
+	Description   string
+	Type          string
+	Score         int
+	MemberCount   int
+	RequiredScore int
+	Donations     int
+	ClanChest     ClanChest
+	Badge         Badge
+	Location      Location
+	Members       []ClanMember
+	Tracking      Tracking
+}
+
+// PopularPlayer represents data on how often a player has been requested from the API.
+// https://docs.royaleapi.com/#/endpoints/popular_players
+type PopularPlayer struct {
+	Popularity   Popularity
+	Tag          string
+	Name         string
+	Trophies     int
+	Rank         int
+	Arena        Arena
+	Clan         PlayerClan
+	Stats        PlayerStats
+	Games        PlayerGames
+	DeckLink     string
+	CurrentDeck  []Card
+	Cards        []Card
+	Achievements []Achievement
+}
+
+// PopularTournament represents info on how often a tournament has been requested from the API.
+// https://docs.royaleapi.com/#/endpoints/popular_tournaments
+type PopularTournament struct {
+	Popularity          Popularity
+	Tag                 string
+	Type                string
+	Status              string
+	Name                string
+	Description         string
+	MaxCapacity         int
+	PreparationDuration int
+	Duration            int
+	CreateTime          int
+	StartTime           int
+	EndTime             int
+	PlayerCount         int
+	Creator             TournamentMember
+	Members             []TournamentMember
+}
+
+// PopularDeckCard represents a card within a deck returned by the popular decks endpoint.
+type PopularDeckCard struct {
+	Arena       int
+	Description string
+	Elixir      int
+	Icon        string
+	ID          int
+	Key         string
+	MaxLevel    int
+	Name        string
+	Rarity      string
+	Type        string
+}
+
+// PopularDeck represents info on how often a deck's data has been requested from the API.
+// https://docs.royaleapi.com/#/endpoints/popular_decks
+type PopularDeck struct {
+	Popularity int
+	Cards      []PopularDeckCard
+	DeckLink   string
 }
