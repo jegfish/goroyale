@@ -496,3 +496,11 @@ type PopularDeck struct {
 	Cards      []PopularDeckCard
 	DeckLink   string
 }
+
+// APIKeyStats represents info on your API token.
+// https://docs.royaleapi.com/#/endpoints/auth_stats
+type APIKeyStats struct {
+	ID           string
+	LastRequest  int
+	RequestCount map[string]int
+}
