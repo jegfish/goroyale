@@ -139,9 +139,7 @@ func (r *requiredForUpgrade) UnmarshalJSON(b []byte) error {
 	if b[0] == '"' {
 		*r = -1
 		return nil
-	} else {
-		return json.Unmarshal(b, (*int)(r))
-	}
+	return json.Unmarshal(b, (*int)(r))
 }
 
 // Achievement represents a player's stats and progress on an achievement.
@@ -203,6 +201,17 @@ type TeamClan struct {
 	Tag   string
 	Name  string
 	Badge Badge
+}
+
+// PlayerChests represents info on upcoming chests for a player.
+// https://docs.royaleapi.com/#/endpoints/player_chests
+type PlayerChests struct {
+	Upcoming []string
+	SuperMagical int
+	Magical int
+	Legendary int
+	Epic int
+	Giant int
 }
 
 // ClanSearch represents a clan received from the clan search endpoint.
