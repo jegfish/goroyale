@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
+	"net/url"
+	"strings"
 	"time"
 )
 
@@ -27,18 +29,6 @@ func New(token string) (c *Client, err error) {
 	return
 }
 
-func (c Client) get(endpoint string, args Args) (resp *http.Response, err error) {
-	path := BASE_URL + endpoint
-	req, err := http.NewRequest("GET", path, nil)
-	if err != nil {
-		return
-	}
-
-	req.Header.Add("auth", c.Token)
-	resp, err = c.client.Do(req)
-	return
-}
-
 // Args represents special args to pass in the request.
 // The API supports args for Field Filter https://docs.royaleapi.com/#/field_filter
 // and Pagination https://docs.royaleapi.com/#/pagination.
@@ -49,36 +39,85 @@ type Args struct {
 	Page    int
 }
 
-// GetAPIVersion requests the current version of the API.
-// https://docs.royaleapi.com/#/endpoints/version
-func (c Client) GetAPIVersion() (bodyString string, err error) {
-	if args != Args{} {
-		log.
-	}	
+func argQuery(args Args) (q url.Values) {
+	if args.Keys != nil {
+		q.Add("keys", strings.Join(args.Keys, ","))
+	}
 
-	resp, err := c.get("/version", Args{})
-	defer resp.Body.Close()
+	if args.Exclude != nil {
+		q.Add("exclude", strings.Join(args.Keys, ","))
+	}
+
+	if args.Max != 0 {
+		q.Add("max", string(args.Max))
+	}
+
+	if args.Page != 0 {
+		q.Add("page", string(args.Page))
+	}
+
+	return
+}
+
+func (c Client) get(path string, args Args) (bytes []byte, err error) {
+	path = BASE_URL + path
+	req, err := http.NewRequest("GET", path, nil)
 	if err != nil {
 		return
 	}
-	bodyBytes, err := ioutil.ReadAll(resp.Body)
-	bodyString = string(bodyBytes)
+	req.Header.Add("auth", c.Token)
+	req.URL.RawQuery = argQuery(args).Encode()
+
+	resp, err := c.client.Do(req)
+	if err != nil {
+		return
+	}
+	defer resp.Body.Close()
+	bytes, err = ioutil.ReadAll(resp.Body)
+	return
+}
+
+// GetAPIVersion requests the current version of the API.
+// https://docs.royaleapi.com/#/endpoints/version
+func (c Client) GetAPIVersion() (bodyString string, err error) {
+	bytes, err := c.get("/version", Args{})
+	if err != nil {
+		return
+	}
+	bodyString = string(bytes)
 	return
 }
 
 // GetPlayer retrieves a player by their tag.
 // https://docs.royaleapi.com/#/endpoints/player
 func (c Client) GetPlayer(tag string, args Args) (p Player, err error) {
+	var b []byte
 	path := "/player/" + tag
-	resp, err := c.get(path, args)
-	defer resp.Body.Close()
-	if err != nil {
-		return
+	if b, err = c.get(path, args); err == nil {
+		err = json.Unmarshal(b, &p)
 	}
-	bodyBytes, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return
+	return
+}
+
+// GetPlayers works like GetPlayer but can return multiple players.
+// The API asks that you don't include more than 7 tags in this request.
+// https://docs.royaleapi.com/#/endpoints/player
+func (c Client) GetPlayers(tags []string, args Args) (ps []Player, err error) {
+	var b []byte
+	path := "/player/" + strings.Join(tags, ",")
+	if b, err = c.get(path, args); err == nil {
+		err = json.Unmarshal(b, &ps)
 	}
-	err = json.Unmarshal(bodyBytes, &p)
+	return
+}
+
+// GetPlayerBattles gets battles a player participated in.
+// https://docs.royaleapi.com/#/endpoints/player_battles
+func (c Client) GetPlayerBattles(tag string, args Args) (bs []Battle, err error) {
+	var b []byte
+	path := "/player/" + tag + "/battles"
+	if b, err = c.get(path, args); err == nil {
+		err = json.Unmarshal(b, &bs)
+	}
 	return
 }
