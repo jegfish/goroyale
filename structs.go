@@ -306,8 +306,8 @@ type ClanWarParticipant struct {
 	Wins          int
 }
 
-// ClanWarLog represents a clan war returned from the clan warlog endpoint
-type ClanWarLog struct {
+// ClanWarLogEntry represents a clan war returned from the clan warlog endpoint
+type ClanWarLogEntry struct {
 	CreatedDate  int
 	Participants []ClanWarParticipant
 	Standings    []ClanWarLogClan
