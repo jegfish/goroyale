@@ -139,6 +139,7 @@ func (r *requiredForUpgrade) UnmarshalJSON(b []byte) error {
 	if b[0] == '"' {
 		*r = -1
 		return nil
+	}
 	return json.Unmarshal(b, (*int)(r))
 }
 
@@ -206,12 +207,12 @@ type TeamClan struct {
 // PlayerChests represents info on upcoming chests for a player.
 // https://docs.royaleapi.com/#/endpoints/player_chests
 type PlayerChests struct {
-	Upcoming []string
+	Upcoming     []string
 	SuperMagical int
-	Magical int
-	Legendary int
-	Epic int
-	Giant int
+	Magical      int
+	Legendary    int
+	Epic         int
+	Giant        int
 }
 
 // ClanSearch represents a clan received from the clan search endpoint.
@@ -513,3 +514,5 @@ type APIKeyStats struct {
 	LastRequest  int
 	RequestCount map[string]int
 }
+
+// TODO: Add struct for /constant
