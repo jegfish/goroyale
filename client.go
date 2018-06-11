@@ -182,7 +182,16 @@ func (c Client) GetAPIVersion() (ver string, err error) {
 	return
 }
 
-// TODO: Add Client.GetConstants for /constants
+// GetConstants returns constants from the API.
+// https://docs.royaleapi.com/#/endpoints/constants
+func (c Client) GetConstants(args Args) (constants Constants, err error) {
+	var b []byte
+	path := "/constants"
+	if b, err = c.get(path, args); err == nil {
+		err = json.Unmarshal(b, &constants)
+	}
+	return
+}
 
 // GetPlayer retrieves a player by their tag.
 // https://docs.royaleapi.com/#/endpoints/player
