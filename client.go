@@ -19,12 +19,16 @@ type Client struct {
 }
 
 // New creates a new RoyaleAPI client.
-func New(token string) (c *Client, err error) {
+func New(token string, timeout time.Duration) (c Client, err error) {
 	if token == "" {
 		panic("Client requires token for authorization with the API.")
 	}
 	c.Token = token
-	c.client = http.Client{Timeout: (10 * time.Second)}
+	if timeout == 0 {
+		c.client = http.Client{Timeout: (10 * time.Second)}
+	} else {
+		c.client = http.Client{Timeout: (timeout)}
+	}
 
 	return
 }
@@ -43,24 +47,25 @@ type Args struct {
 	Page    int
 }
 
-func (args Args) toQuery() (q url.Values) {
+func (args Args) toQuery() url.Values {
+	q := url.Values{}
 	if args.Keys != nil {
-		q.Add("keys", strings.Join(args.Keys, ","))
+		q.Set("keys", strings.Join(args.Keys, ","))
 	}
 
 	if args.Exclude != nil {
-		q.Add("exclude", strings.Join(args.Keys, ","))
+		q.Set("exclude", strings.Join(args.Keys, ","))
 	}
 
 	if args.Max != 0 {
-		q.Add("max", string(args.Max))
+		q.Set("max", string(args.Max))
 	}
 
 	if args.Page != 0 {
-		q.Add("page", string(args.Page))
+		q.Set("page", string(args.Page))
 	}
 
-	return
+	return q
 }
 
 func (c Client) get(path string, args params) (bytes []byte, err error) {
@@ -92,44 +97,45 @@ type ClanSearchArgs struct {
 	LocationID int
 }
 
-func (args ClanSearchArgs) toQuery() (q url.Values) {
+func (args ClanSearchArgs) toQuery() url.Values {
+	q := url.Values{}
 	if args.Keys != nil {
-		q.Add("keys", strings.Join(args.Keys, ","))
+		q.Set("keys", strings.Join(args.Keys, ","))
 	}
 
 	if args.Exclude != nil {
-		q.Add("exclude", strings.Join(args.Keys, ","))
+		q.Set("exclude", strings.Join(args.Keys, ","))
 	}
 
 	if args.Max != 0 {
-		q.Add("max", string(args.Max))
+		q.Set("max", string(args.Max))
 	}
 
 	if args.Page != 0 {
-		q.Add("page", string(args.Page))
+		q.Set("page", string(args.Page))
 	}
 
 	if args.Name != "" {
-		q.Add("name", args.Name)
+		q.Set("name", args.Name)
 	}
 
 	if args.MinScore != 0 {
-		q.Add("score", string(args.MinScore))
+		q.Set("score", string(args.MinScore))
 	}
 
 	if args.MinMembers != 0 {
-		q.Add("minMembers", string(args.MinMembers))
+		q.Set("minMembers", string(args.MinMembers))
 	}
 
 	if args.MaxMembers != 0 {
-		q.Add("maxMembers", string(args.MaxMembers))
+		q.Set("maxMembers", string(args.MaxMembers))
 	}
 
 	if args.LocationID != 0 {
-		q.Add("locationId", string(args.LocationID))
+		q.Set("locationId", string(args.LocationID))
 	}
 
-	return
+	return q
 }
 
 // TournamentSearchArgs
@@ -140,28 +146,29 @@ type TournamentSearchArgs struct {
 	Name string
 }
 
-func (args TournamentSearchArgs) toQuery() (q url.Values) {
+func (args TournamentSearchArgs) toQuery() url.Values {
+	q := url.Values{}
 	if args.Keys != nil {
-		q.Add("keys", strings.Join(args.Keys, ","))
+		q.Set("keys", strings.Join(args.Keys, ","))
 	}
 
 	if args.Exclude != nil {
-		q.Add("exclude", strings.Join(args.Keys, ","))
+		q.Set("exclude", strings.Join(args.Keys, ","))
 	}
 
 	if args.Max != 0 {
-		q.Add("max", string(args.Max))
+		q.Set("max", string(args.Max))
 	}
 
 	if args.Page != 0 {
-		q.Add("page", string(args.Page))
+		q.Set("page", string(args.Page))
 	}
 
 	if args.Name != "" {
-		q.Add("name", args.Name)
+		q.Set("name", args.Name)
 	}
 
-	return
+	return q
 }
 
 // GetAPIVersion requests the current version of the API.
