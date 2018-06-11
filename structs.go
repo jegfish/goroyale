@@ -515,4 +515,22 @@ type APIKeyStats struct {
 	RequestCount map[string]int
 }
 
+// TournamentSearchEntry represents a tournament that was returned from Client.TournamentSearch().
+// https://docs.royaleapi.com/#/endpoints/tournaments_search
+type TournamentSearchEntry struct {
+	Tag                 string
+	Type                string
+	Status              string
+	CreatorTag          string
+	Name                string
+	MaxCapacity         int
+	PreparationDuration int
+	Duration            int
+	CreateTime          int
+	StartTime           int
+	EndTime             int
+	PlayerCount         int
+	Members             []TournamentMember
+}
+
 // TODO: Add struct for /constant

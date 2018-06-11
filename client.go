@@ -29,6 +29,10 @@ func New(token string) (c *Client, err error) {
 	return
 }
 
+type params interface {
+	toQuery() url.Values
+}
+
 // Args represents special args to pass in the request.
 // The API supports args for Field Filter https://docs.royaleapi.com/#/field_filter
 // and Pagination https://docs.royaleapi.com/#/pagination.
@@ -39,7 +43,7 @@ type Args struct {
 	Page    int
 }
 
-func argQuery(args Args) (q url.Values) {
+func (args Args) toQuery() (q url.Values) {
 	if args.Keys != nil {
 		q.Add("keys", strings.Join(args.Keys, ","))
 	}
@@ -59,14 +63,14 @@ func argQuery(args Args) (q url.Values) {
 	return
 }
 
-func (c Client) get(path string, args Args) (bytes []byte, err error) {
+func (c Client) get(path string, args params) (bytes []byte, err error) {
 	path = baseURL + path
 	req, err := http.NewRequest("GET", path, nil)
 	if err != nil {
 		return
 	}
 	req.Header.Add("auth", c.Token)
-	req.URL.RawQuery = argQuery(args).Encode()
+	req.URL.RawQuery = args.toQuery().Encode()
 
 	resp, err := c.client.Do(req)
 	if err != nil {
@@ -74,6 +78,89 @@ func (c Client) get(path string, args Args) (bytes []byte, err error) {
 	}
 	defer resp.Body.Close()
 	bytes, err = ioutil.ReadAll(resp.Body)
+	return
+}
+
+// https://docs.royaleapi.com/#/endpoints/clan_search
+type ClanSearchArgs struct {
+	Args
+
+	Name       string
+	MinScore   int
+	MinMembers int
+	MaxMembers int
+	LocationID int
+}
+
+func (args ClanSearchArgs) toQuery() (q url.Values) {
+	if args.Keys != nil {
+		q.Add("keys", strings.Join(args.Keys, ","))
+	}
+
+	if args.Exclude != nil {
+		q.Add("exclude", strings.Join(args.Keys, ","))
+	}
+
+	if args.Max != 0 {
+		q.Add("max", string(args.Max))
+	}
+
+	if args.Page != 0 {
+		q.Add("page", string(args.Page))
+	}
+
+	if args.Name != "" {
+		q.Add("name", args.Name)
+	}
+
+	if args.MinScore != 0 {
+		q.Add("score", string(args.MinScore))
+	}
+
+	if args.MinMembers != 0 {
+		q.Add("minMembers", string(args.MinMembers))
+	}
+
+	if args.MaxMembers != 0 {
+		q.Add("maxMembers", string(args.MaxMembers))
+	}
+
+	if args.LocationID != 0 {
+		q.Add("locationId", string(args.LocationID))
+	}
+
+	return
+}
+
+// TournamentSearchArgs
+// https://docs.royaleapi.com/#/endpoints/tournaments_search
+type TournamentSearchArgs struct {
+	Args
+
+	Name string
+}
+
+func (args TournamentSearchArgs) toQuery() (q url.Values) {
+	if args.Keys != nil {
+		q.Add("keys", strings.Join(args.Keys, ","))
+	}
+
+	if args.Exclude != nil {
+		q.Add("exclude", strings.Join(args.Keys, ","))
+	}
+
+	if args.Max != 0 {
+		q.Add("max", string(args.Max))
+	}
+
+	if args.Page != 0 {
+		q.Add("page", string(args.Page))
+	}
+
+	if args.Name != "" {
+		q.Add("name", args.Name)
+	}
+
 	return
 }
 
@@ -157,7 +244,16 @@ func (c Client) GetPlayersChests(tags []string, args Args) (chests []PlayerChest
 	return
 }
 
-// TODO: ClanSearch (https://docs.royaleapi.com/#/endpoints/clan_search)
+// ClanSearch searches for a clan using the provided args.
+// https://docs.royaleapi.com/#/endpoints/clan_search
+func (c Client) ClanSearch(args ClanSearchArgs) (clans []ClanSearch, err error) {
+	var b []byte
+	path := "clan/search"
+	if b, err = c.get(path, args); err == nil {
+		err = json.Unmarshal(b, &clans)
+	}
+	return
+}
 
 // GetClan returns info about a specific clan.
 // https://docs.royaleapi.com/#/endpoints/clan
@@ -270,7 +366,16 @@ func (c Client) GetKnownTournaments(args Args) (tournaments []KnownTournament, e
 	return
 }
 
-// TODO: TournamentsSearch (https://docs.royaleapi.com/#/endpoints/tournaments_search)
+// TournamentSearch returns a slice of tournaments by a name to search for.
+// https://docs.royaleapi.com/#/endpoints/tournaments_search
+func (c Client) TournamentSearch(args TournamentSearchArgs) (tournaments []TournamentSearchEntry, err error) {
+	var b []byte
+	path := "/tournaments/search"
+	if b, err = c.get(path, args); err == nil {
+		err = json.Unmarshal(b, &tournaments)
+	}
+	return
+}
 
 // GetTournament returns the specified Tournament by tag.
 // https://docs.royaleapi.com/#/endpoints/tournaments
