@@ -1,6 +1,7 @@
 package goroyale
 
 import (
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -28,7 +29,8 @@ type Client struct {
 // New creates a new RoyaleAPI client.
 func New(token string, timeout time.Duration) (c Client, err error) {
 	if token == "" {
-		panic("Client requires token for authorization with the API.")
+		err = errors.New("client requires token for authorization with the API")
+		return
 	}
 	c.Token = token
 	if timeout == 0 {
