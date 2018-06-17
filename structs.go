@@ -358,18 +358,18 @@ type ClanTracking struct {
 // OpenTournament is an open tournament.
 // https://docs.royaleapi.com/#/endpoints/tournaments_open
 type OpenTournament struct {
-	Tag                 string
-	Type                string
-	Status              string
-	Name                string
-	Capacity            int
-	PlayerCount         int
-	MaxCapacity         int
-	PreparationDuration int
-	Duration            int
-	CreateTime          int
-	StartTime           int
-	EndTime             int
+	Tag            string
+	Open           bool
+	Status         string
+	Name           string
+	Capacity       int
+	CurrentPlayers int
+	MaxPlayers     int
+	PrepTime       int
+	Duration       int
+	CreateTime     int
+	StartTime      int
+	EndTime        int
 }
 
 // KnownTournament is a tournament someone has already searched for.
@@ -468,21 +468,21 @@ type PopularPlayer struct {
 // PopularTournament represents info on how often a tournament has been requested from the API.
 // https://docs.royaleapi.com/#/endpoints/popular_tournaments
 type PopularTournament struct {
-	Popularity          Popularity
-	Tag                 string
-	Type                string
-	Status              string
-	Name                string
-	Description         string
-	MaxCapacity         int
-	PreparationDuration int
-	Duration            int
-	CreateTime          int
-	StartTime           int
-	EndTime             int
-	PlayerCount         int
-	Creator             TournamentMember
-	Members             []TournamentMember
+	Popularity     Popularity
+	Tag            string
+	Type           string
+	Status         string
+	Name           string
+	Description    string
+	MaxPlayers     int
+	PrepTime       int
+	Duration       int
+	CreateTime     int
+	StartTime      int
+	EndTime        int
+	CurrentPlayers int
+	Creator        TournamentMember
+	Members        []TournamentMember
 }
 
 // PopularDeckCard represents a card within a deck returned by the popular decks endpoint.
@@ -518,19 +518,19 @@ type APIKeyStats struct {
 // TournamentSearchEntry represents a tournament that was returned from Client.TournamentSearch().
 // https://docs.royaleapi.com/#/endpoints/tournaments_search
 type TournamentSearchEntry struct {
-	Tag                 string
-	Type                string
-	Status              string
-	CreatorTag          string
-	Name                string
-	MaxCapacity         int
-	PreparationDuration int
-	Duration            int
-	CreateTime          int
-	StartTime           int
-	EndTime             int
-	PlayerCount         int
-	Members             []TournamentMember
+	Tag            string
+	Type           string
+	Status         string
+	CreatorTag     string
+	Name           string
+	MaxPlayers     int
+	PrepTime       int
+	Duration       int
+	CreateTime     int
+	StartTime      int
+	EndTime        int
+	CurrentPlayers int
+	Members        []TournamentMember
 }
 
 // Constants represents API constants.
