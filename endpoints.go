@@ -197,7 +197,7 @@ func (c *Client) GetClanTracking(tag string, params url.Values) (tracking ClanTr
 
 // GetOpenTournaments returns a slice of open tournaments.
 // https://docs.royaleapi.com/#/endpoints/tournaments_open
-func (c *Client) GetOpenTournaments(params url.Values) (tournaments []OpenTournament, err error) {
+func (c *Client) GetOpenTournaments(params url.Values) (tournaments []Tournament, err error) {
 	var b []byte
 	path := "/tournaments/open"
 	if b, err = c.get(path, params); err == nil {
@@ -217,9 +217,29 @@ func (c *Client) GetKnownTournaments(params url.Values) (tournaments []KnownTour
 	return
 }
 
+// Get1kTournaments returns a slice of tournaments that have 1000 MaxPlayers.
+func (c *Client) Get1kTournaments(params url.Values) (tournaments []Tournament1k, err error) {
+	var b []byte
+	path := "/tournaments/1k"
+	if b, err = c.get(path, params); err == nil {
+		err = json.Unmarshal(b, &tournaments)
+	}
+	return
+}
+
+// GetPrepTournaments returns a slice of tournaments that have a Status of "inPreparation".
+func (c *Client) GetPrepTournaments(params url.Values) (tournaments []PrepTournament, err error) {
+	var b []byte
+	path := "/tournaments/prep"
+	if b, err = c.get(path, params); err == nil {
+		err = json.Unmarshal(b, &tournaments)
+	}
+	return
+}
+
 // TournamentSearch returns a slice of tournaments by a name to search for.
 // https://docs.royaleapi.com/#/endpoints/tournaments_search
-func (c *Client) TournamentSearch(params url.Values) (tournaments []TournamentSearchEntry, err error) {
+func (c *Client) TournamentSearch(params url.Values) (tournaments []SearchedTournament, err error) {
 	var b []byte
 	path := "/tournaments/search"
 	if b, err = c.get(path, params); err == nil {
@@ -230,7 +250,7 @@ func (c *Client) TournamentSearch(params url.Values) (tournaments []TournamentSe
 
 // GetTournament returns the specified Tournament by tag.
 // https://docs.royaleapi.com/#/endpoints/tournaments
-func (c *Client) GetTournament(tag string, params url.Values) (tournament Tournament, err error) {
+func (c *Client) GetTournament(tag string, params url.Values) (tournament SpecificTournament, err error) {
 	var b []byte
 	path := "/tournaments/" + tag
 	if b, err = c.get(path, params); err == nil {
@@ -239,9 +259,9 @@ func (c *Client) GetTournament(tag string, params url.Values) (tournament Tourna
 	return
 }
 
-// GetTournaments works like GetTournament but can return multiple Tournaments.
+// GetTournaments works like GetTournament but can return multiple SpecificTournaments.
 // https://docs.royaleapi.com/#/endpoints/tournaments?id=multiple-tournaments
-func (c *Client) GetTournaments(tags []string, params url.Values) (tournaments []Tournament, err error) {
+func (c *Client) GetTournaments(tags []string, params url.Values) (tournaments []SpecificTournament, err error) {
 	var b []byte
 	path := "/tournaments/" + strings.Join(tags, ",")
 	if b, err = c.get(path, params); err == nil {

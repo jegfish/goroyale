@@ -355,9 +355,34 @@ type ClanTracking struct {
 	Tag string
 }
 
-// OpenTournament is an open tournament.
+// TournamentMember represents a member who participated in a tournament.
+type TournamentMember struct {
+	Tag   string
+	Name  string
+	Score int
+}
+
+// SearchedTournament represents a tournament that was returned from Client.TournamentSearch().
+// https://docs.royaleapi.com/#/endpoints/tournaments_search
+type SearchedTournament struct {
+	Tag            string
+	Open           bool
+	Status         string
+	CreatorTag     string
+	Name           string
+	MaxPlayers     int
+	PrepTime       int
+	Duration       int
+	CreateTime     int
+	StartTime      int
+	EndTime        int
+	CurrentPlayers int
+	Members        []TournamentMember
+}
+
+// Tournament is a basic tournament, other Tournament structs will have more info.
 // https://docs.royaleapi.com/#/endpoints/tournaments_open
-type OpenTournament struct {
+type Tournament struct {
 	Tag            string
 	Open           bool
 	Status         string
@@ -375,24 +400,33 @@ type OpenTournament struct {
 // KnownTournament is a tournament someone has already searched for.
 // https://docs.royaleapi.com/#/endpoints/tournaments_known
 type KnownTournament struct {
-	OpenTournament
+	Tournament
 }
 
-// Tournament represents a specific tournament with extra info included.
+// Tournament1k is a tournament returned from Get1kTournaments.
+// It always has 1000 MaxPlayers.
+type Tournament1k struct {
+	Tournament
+
+	UpdatedAt int
+}
+
+// PrepTournament is a tournament returned from GetPrepTournaments.
+// It always has Status set to "inPreparation".
+type PrepTournament struct {
+	Tournament
+
+	UpdatedAt int
+}
+
+// SpecificTournament represents a tournament retrieved by tag with extra info included.
 // https://docs.royaleapi.com/#/endpoints/tournaments_known
-type Tournament struct {
-	OpenTournament
+type SpecificTournament struct {
+	Tournament
 
 	Description string
 	Creator     TournamentMember
 	Members     []TournamentMember
-}
-
-// TournamentMember represents a member who participated in a tournament.
-type TournamentMember struct {
-	Tag   string
-	Name  string
-	Score int
 }
 
 // TopClan is a clan from the leaderboards.
@@ -470,7 +504,7 @@ type PopularPlayer struct {
 type PopularTournament struct {
 	Popularity     Popularity
 	Tag            string
-	Type           string
+	Open           bool
 	Status         string
 	Name           string
 	Description    string
@@ -513,24 +547,6 @@ type APIKeyStats struct {
 	ID           string
 	LastRequest  int
 	RequestCount map[string]int
-}
-
-// TournamentSearchEntry represents a tournament that was returned from Client.TournamentSearch().
-// https://docs.royaleapi.com/#/endpoints/tournaments_search
-type TournamentSearchEntry struct {
-	Tag            string
-	Type           string
-	Status         string
-	CreatorTag     string
-	Name           string
-	MaxPlayers     int
-	PrepTime       int
-	Duration       int
-	CreateTime     int
-	StartTime      int
-	EndTime        int
-	CurrentPlayers int
-	Members        []TournamentMember
 }
 
 // Constants represents API constants.
