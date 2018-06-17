@@ -54,7 +54,7 @@ func main() {
 ## Ratelimits
 If you hit the RoyaleAPI ratelimit, the lib will just refuse to run your request and return an error message in this format:
 ```
-ratelimit, retry in: <milliseconds>
+ratelimit, retry in: 12345ms
 ```
 There are a few minor issues with this.
 

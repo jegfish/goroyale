@@ -46,7 +46,7 @@ func (c *Client) checkRatelimit() error {
 		return nil
 	}
 	if now := time.Now().UnixNano() / 1000000; c.ratelimit.remaining == 0 && now < c.ratelimit.reset {
-		return fmt.Errorf("ratelimit, retry in: %d", c.ratelimit.reset-now)
+		return fmt.Errorf("ratelimit, retry in: %dms", c.ratelimit.reset-now)
 	}
 	return nil
 }
