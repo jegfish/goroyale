@@ -4,7 +4,7 @@ A Golang wrapper for the Clash Royale API at https://royaleapi.com/.
 ## Installing
 If you have Go installed you can run this command.
 ```sh
-go get github.com/meliorihi/goroyale
+go get github.com/Altarrel/goroyale
 ```
 
 ## Ratelimits
