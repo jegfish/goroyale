@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
-	"strings"
 	"time"
 )
 
@@ -42,41 +41,6 @@ func New(token string, timeout time.Duration) (c Client, err error) {
 	return
 }
 
-type params interface {
-	toQuery() url.Values
-}
-
-// Args represents special args to pass in the request.
-// The API supports args for Field Filter https://docs.royaleapi.com/#/field_filter
-// and Pagination https://docs.royaleapi.com/#/pagination.
-type Args struct {
-	Keys    []string
-	Exclude []string
-	Max     int
-	Page    int
-}
-
-func (args Args) toQuery() url.Values {
-	q := url.Values{}
-	if args.Keys != nil {
-		q.Set("keys", strings.Join(args.Keys, ","))
-	}
-
-	if args.Exclude != nil {
-		q.Set("exclude", strings.Join(args.Keys, ","))
-	}
-
-	if args.Max != 0 {
-		q.Set("max", string(args.Max))
-	}
-
-	if args.Page != 0 {
-		q.Set("page", string(args.Page))
-	}
-
-	return q
-}
-
 func (c *Client) checkRatelimit() error {
 	if c.ratelimit.remaining == 0 || c.ratelimit.reset == 0 {
 		return nil
@@ -107,7 +71,7 @@ func (c *Client) updateRatelimit(resp *http.Response) error {
 	return nil
 }
 
-func (c *Client) get(path string, args params) (bytes []byte, err error) {
+func (c *Client) get(path string, params url.Values) (bytes []byte, err error) {
 	err = c.checkRatelimit()
 	if err != nil {
 		return
@@ -119,7 +83,7 @@ func (c *Client) get(path string, args params) (bytes []byte, err error) {
 		return
 	}
 	req.Header.Add("auth", c.Token)
-	req.URL.RawQuery = args.toQuery().Encode()
+	req.URL.RawQuery = params.Encode()
 
 	resp, err := c.client.Do(req)
 	if err != nil {
@@ -129,90 +93,4 @@ func (c *Client) get(path string, args params) (bytes []byte, err error) {
 	bytes, err = ioutil.ReadAll(resp.Body)
 	err = c.updateRatelimit(resp)
 	return
-}
-
-// ClanSearchArgs lets you provide search terms for ClanSearch.
-// https://docs.royaleapi.com/#/endpoints/clan_search
-type ClanSearchArgs struct {
-	Args
-
-	Name       string
-	MinScore   int
-	MinMembers int
-	MaxMembers int
-	LocationID int
-}
-
-func (args ClanSearchArgs) toQuery() url.Values {
-	q := url.Values{}
-	if args.Keys != nil {
-		q.Set("keys", strings.Join(args.Keys, ","))
-	}
-
-	if args.Exclude != nil {
-		q.Set("exclude", strings.Join(args.Keys, ","))
-	}
-
-	if args.Max != 0 {
-		q.Set("max", string(args.Max))
-	}
-
-	if args.Page != 0 {
-		q.Set("page", string(args.Page))
-	}
-
-	if args.Name != "" {
-		q.Set("name", args.Name)
-	}
-
-	if args.MinScore != 0 {
-		q.Set("score", string(args.MinScore))
-	}
-
-	if args.MinMembers != 0 {
-		q.Set("minMembers", string(args.MinMembers))
-	}
-
-	if args.MaxMembers != 0 {
-		q.Set("maxMembers", string(args.MaxMembers))
-	}
-
-	if args.LocationID != 0 {
-		q.Set("locationId", string(args.LocationID))
-	}
-
-	return q
-}
-
-// TournamentSearchArgs lets you provide search terms for TournamentSearch
-// https://docs.royaleapi.com/#/endpoints/tournaments_search
-type TournamentSearchArgs struct {
-	Args
-
-	Name string
-}
-
-func (args TournamentSearchArgs) toQuery() url.Values {
-	q := url.Values{}
-	if args.Keys != nil {
-		q.Set("keys", strings.Join(args.Keys, ","))
-	}
-
-	if args.Exclude != nil {
-		q.Set("exclude", strings.Join(args.Keys, ","))
-	}
-
-	if args.Max != 0 {
-		q.Set("max", string(args.Max))
-	}
-
-	if args.Page != 0 {
-		q.Set("page", string(args.Page))
-	}
-
-	if args.Name != "" {
-		q.Set("name", args.Name)
-	}
-
-	return q
 }
