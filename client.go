@@ -27,6 +27,7 @@ type Client struct {
 
 // New creates a new RoyaleAPI client.
 func New(token string, timeout time.Duration) (c *Client, err error) {
+	c = &Client{}
 	if token == "" {
 		err = errors.New("client requires token for authorization with the API")
 		return
