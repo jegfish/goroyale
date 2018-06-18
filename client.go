@@ -1,3 +1,4 @@
+// Package goroyale is a wrapper for the Clash Royale API at https://royaleapi.com/
 package goroyale
 
 import (
