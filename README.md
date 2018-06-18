@@ -48,17 +48,15 @@ func main() {
 		fmt.Println("Clan:", p.Clan.Name)
 	}
 }
-
 ```
 
 ## Ratelimits
-If you hit the RoyaleAPI ratelimit, the lib will just refuse to run your request and return an error message in this format:
+If you hit the RoyaleAPI ratelimit, the lib will just refuse to run your request and return an error of type `goroyale.RatelimitError`.
+You can handle this with a type switch on the error.
+```golang
+switch e := err.(type) {
+case goroyale.RatelimitError:
+	// RatelimitError.RetryAfter is a time.Duration to wait before sending another request to the API.
+	time.Sleep(e.RetryAfter)
+}
 ```
-ratelimit, retry in: 12345ms
-```
-There are a few minor issues with this.
-
-- Some endpoints work differently with ratelimits (such as /version)
-- It's not super easy to work with
-
-In a future version this will be improved.
