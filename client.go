@@ -1,8 +1,8 @@
 package goroyale
 
 import (
+	"encoding/json"
 	"errors"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -14,7 +14,7 @@ const baseURL = "https://api.royaleapi.com"
 
 type ratelimit struct {
 	remaining int
-	reset     int64
+	reset     time.Time
 }
 
 // Client allows you to easily interact with RoyaleAPI.
@@ -38,16 +38,15 @@ func New(token string, timeout time.Duration) (c *Client, err error) {
 	} else {
 		c.client = http.Client{Timeout: (timeout)}
 	}
-
 	return
 }
 
 func (c *Client) checkRatelimit() error {
-	if c.ratelimit.remaining == 0 || c.ratelimit.reset == 0 {
+	if c.ratelimit.remaining == 0 && c.ratelimit.reset.IsZero() {
 		return nil
 	}
-	if now := time.Now().UnixNano() / 1000000; c.ratelimit.remaining == 0 && now < c.ratelimit.reset {
-		return fmt.Errorf("ratelimit, retry in: %dms", c.ratelimit.reset-now)
+	if wait := time.Until(c.ratelimit.reset); c.ratelimit.remaining == 0 && wait > 0 {
+		return newRatelimitError(wait)
 	}
 	return nil
 }
@@ -63,11 +62,11 @@ func (c *Client) updateRatelimit(resp *http.Response) error {
 	}
 	reset := resp.Header.Get("x-ratelimit-reset")
 	if reset != "" {
-		resetI, err := strconv.ParseInt(reset, 10, 64)
+		ms, err := strconv.ParseInt(reset, 10, 64)
 		if err != nil {
 			return err
 		}
-		c.ratelimit.reset = resetI
+		c.ratelimit.reset = time.Unix(0, ms*1000000) // * 1000 as have ms, need nsec
 	}
 	return nil
 }
@@ -91,7 +90,15 @@ func (c *Client) get(path string, params url.Values) (bytes []byte, err error) {
 		return
 	}
 	defer resp.Body.Close()
+
 	bytes, err = ioutil.ReadAll(resp.Body)
+
+	if resp.StatusCode != 200 {
+		var apiErr APIError
+		json.Unmarshal(bytes, &apiErr)
+		return []byte{}, apiErr
+	}
+
 	err = c.updateRatelimit(resp)
 	return
 }
