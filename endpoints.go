@@ -208,7 +208,7 @@ func (c *Client) GetOpenTournaments(params url.Values) (tournaments []Tournament
 
 // GetKnownTournaments returns a slice of tournaments people have searched for.
 // https://docs.royaleapi.com/#/endpoints/tournaments_known
-func (c *Client) GetKnownTournaments(params url.Values) (tournaments []KnownTournament, err error) {
+func (c *Client) GetKnownTournaments(params url.Values) (tournaments []Tournament, err error) {
 	var b []byte
 	path := "/tournaments/known"
 	if b, err = c.get(path, params); err == nil {

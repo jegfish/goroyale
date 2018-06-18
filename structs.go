@@ -397,12 +397,6 @@ type Tournament struct {
 	EndTime        int
 }
 
-// KnownTournament is a tournament someone has already searched for.
-// https://docs.royaleapi.com/#/endpoints/tournaments_known
-type KnownTournament struct {
-	Tournament
-}
-
 // Tournament1k is a tournament returned from Get1kTournaments.
 // It always has 1000 MaxPlayers.
 type Tournament1k struct {
