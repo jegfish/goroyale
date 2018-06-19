@@ -1,4 +1,7 @@
 # goroyale
+[![GoDoc](https://godoc.org/github.com/Altarrel/goroyale?status.svg)](https://godoc.org/github.com/Altarrel/goroyale)
+[![Go report](https://goreportcard.com/badge/github.com/Altarrel/goroyale)](https://goreportcard.com/report/github.com/Altarrel/goroyale)
+
 A Golang wrapper for the Clash Royale API at https://royaleapi.com/.
 
 ## Installing
