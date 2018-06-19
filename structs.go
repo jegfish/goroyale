@@ -50,6 +50,7 @@ type Badge struct {
 	Image    string // Link to badge image
 }
 
+// PlayerStats represents stats from a player's profile.
 type PlayerStats struct {
 	TournamentCardsWon int
 	MaxTrophies        int
