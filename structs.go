@@ -90,27 +90,21 @@ type PlayerGames struct {
 
 // LeagueStatistics represents a player's season stats.
 type LeagueStatistics struct {
-	CurrentSeason  CurrentSeason
-	PreviousSeason PreviousSeason
-	BestSeason     BestSeason
-}
-
-type CurrentSeason struct {
-	Rank         int
-	Trophies     int
-	BestTrophies int
-}
-
-type PreviousSeason struct {
-	ID           string
-	Trophies     int
-	BestTrophies int
-}
-
-type BestSeason struct {
-	ID       string
-	Rank     int
-	Trophies int
+	CurrentSeason struct {
+		Rank         int
+		Trophies     int
+		BestTrophies int
+	}
+	PreviousSeason struct {
+		ID           string
+		Trophies     int
+		BestTrophies int
+	}
+	BestSeason struct {
+		ID       string
+		Rank     int
+		Trophies int
+	}
 }
 
 // Card represents a card from the game.
