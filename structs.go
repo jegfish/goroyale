@@ -230,7 +230,7 @@ type Location struct {
 	Code      string
 }
 
-// Clan represents a clan recieved directly from the clan endpoint.
+// Clan represents a clan received directly from the clan endpoint.
 type Clan struct {
 	Tag           string
 	Name          string
