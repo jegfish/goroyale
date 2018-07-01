@@ -51,6 +51,19 @@ func (c *Client) Players(tags []string, params url.Values) (players []Player, er
 	return
 }
 
+// PlayerVerification verifies the owner of an account with a player API token.
+// On success this will return the Player as if requested through GetPlayer.
+// On failure this will return an APIError with a StatusCode of 400, more info at https://docs.royaleapi.com/#/endpoints/player_verification?id=failure.
+// This method requires the params arg to include these query string parameters https://docs.royaleapi.com/#/endpoints/player_verification?id=query-string-parameters.
+func (c *Client) PlayerVerification(tag string, params url.Values) (player Player, err error) {
+	var b []byte
+	path := "/player/" + tag + "/verify"
+	if b, err = c.get(path, params); err == nil {
+		err = json.Unmarshal(b, &player)
+	}
+	return
+}
+
 // PlayerBattles s battles a player participated in.
 // https://docs.royaleapi.com/#/endpoints/player_battles
 func (c *Client) PlayerBattles(tag string, params url.Values) (battles []Battle, err error) {
