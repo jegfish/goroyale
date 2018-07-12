@@ -61,13 +61,13 @@ func (c *Client) updateRatelimit(resp *http.Response) error {
 		}
 		c.ratelimit.remaining = remainingI
 	}
-	reset := resp.Header.Get("x-ratelimit-reset")
-	if reset != "" {
-		ms, err := strconv.ParseInt(reset, 10, 64)
+	retry := resp.Header.Get("x-ratelimit-retry-after")
+	if retry != "" {
+		sec, err := strconv.ParseInt(retry, 10, 64)
 		if err != nil {
 			return err
 		}
-		c.ratelimit.reset = time.Unix(0, ms*1000000) // * 1000 as have ms, need nsec
+		c.ratelimit.reset = time.Now().Add(time.Second * time.Duration(sec))
 	}
 	return nil
 }
