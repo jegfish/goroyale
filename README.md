@@ -20,7 +20,7 @@ import (
 	"github.com/Altarrel/goroyale"
 )
 
-var token = "API KEY GOES HERE"
+var token = ""
 
 func main() {
 	c, err := goroyale.New(token, 0) // 0 will use the default request timeout of 10 seconds
@@ -29,7 +29,7 @@ func main() {
 		return
 	}
 
-	ver, err := c.GetAPIVersion()
+	ver, err := c.APIVersion()
 	if err != nil {
 		fmt.Println(err)
 	} else {
@@ -39,7 +39,7 @@ func main() {
 	params := map[string][]string{
 		"exclude": {"name"},
 	}
-	p, err := c.GetPlayer("8L9L9GL", params)
+	p, err := c.Player("8L9L9GL", params)
 	if err != nil {
 		fmt.Println(err)
 	} else {
