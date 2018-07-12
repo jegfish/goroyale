@@ -87,6 +87,7 @@ func (c *Client) get(path string, params url.Values) (bytes []byte, err error) {
 	req.URL.RawQuery = params.Encode()
 
 	resp, err := c.client.Do(req)
+	defer c.updateRatelimit(resp)
 	if err != nil {
 		return
 	}
@@ -100,6 +101,5 @@ func (c *Client) get(path string, params url.Values) (bytes []byte, err error) {
 		return []byte{}, apiErr
 	}
 
-	err = c.updateRatelimit(resp)
 	return
 }

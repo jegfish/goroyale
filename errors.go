@@ -25,8 +25,8 @@ func (err RatelimitError) Error() string {
 	return fmt.Sprintf("ratelimit, retry in: %v", err.RetryAfter)
 }
 
-func newRatelimitError(retryAfter time.Duration) *RatelimitError {
-	err := &RatelimitError{
+func newRatelimitError(retryAfter time.Duration) RatelimitError {
+	err := RatelimitError{
 		RetryAfter: retryAfter,
 	}
 	return err
