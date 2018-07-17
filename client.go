@@ -28,16 +28,16 @@ type Client struct {
 
 // New creates a new RoyaleAPI client.
 func New(token string, timeout time.Duration) (c *Client, err error) {
-	c = &Client{}
+	c = &Client{
+		client: http.Client{Timeout: 10 * time.Second},
+	}
 	if token == "" {
 		err = errors.New("client requires token for authorization with the API")
 		return
 	}
 	c.Token = token
-	if timeout == 0 {
-		c.client = http.Client{Timeout: (10 * time.Second)}
-	} else {
-		c.client = http.Client{Timeout: (timeout)}
+	if timeout != 0 {
+		c.client = http.Client{Timeout: timeout}
 	}
 	return
 }
