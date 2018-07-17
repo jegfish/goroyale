@@ -4,6 +4,7 @@ package goroyale
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -13,23 +14,26 @@ import (
 
 const baseURL = "https://api.royaleapi.com"
 
-type ratelimit struct {
-	remaining int
-	reset     time.Time
-}
+//type ratelimit struct {
+//	remaining int
+//	reset     time.Time
+//}
 
 // Client allows you to easily interact with RoyaleAPI.
 type Client struct {
 	Token string
 
-	client    http.Client
-	ratelimit ratelimit
+	client http.Client
+	// using empty struct because it has a byte size of 0
+	// i don't care what's in the channel, just that something is
+	rateBucket chan struct{}
 }
 
 // New creates a new RoyaleAPI client.
 func New(token string, timeout time.Duration) (c *Client, err error) {
 	c = &Client{
-		client: http.Client{Timeout: 10 * time.Second},
+		client:     http.Client{Timeout: 10 * time.Second},
+		rateBucket: make(chan struct{}, 5),
 	}
 	if token == "" {
 		err = errors.New("client requires token for authorization with the API")
@@ -39,18 +43,21 @@ func New(token string, timeout time.Duration) (c *Client, err error) {
 	if timeout != 0 {
 		c.client = http.Client{Timeout: timeout}
 	}
+
+	// Allow initial request
+	c.rateBucket <- struct{}{}
 	return
 }
 
-func (c *Client) checkRatelimit() error {
-	if c.ratelimit.remaining == 0 && c.ratelimit.reset.IsZero() {
-		return nil
-	}
-	if wait := time.Until(c.ratelimit.reset); c.ratelimit.remaining == 0 && wait > 0 {
-		return newRatelimitError(wait)
-	}
-	return nil
-}
+//func (c *Client) checkRatelimit() error {
+//	if c.ratelimit.remaining == 0 && c.ratelimit.reset.IsZero() {
+//		return nil
+//	}
+//	if wait := time.Until(c.ratelimit.reset); c.ratelimit.remaining == 0 && wait > 0 {
+//		return newRatelimitError(wait)
+//	}
+//	return nil
+//}
 
 func (c *Client) updateRatelimit(resp *http.Response) error {
 	remaining := resp.Header.Get("x-ratelimit-remaining")
@@ -59,7 +66,16 @@ func (c *Client) updateRatelimit(resp *http.Response) error {
 		if err != nil {
 			return err
 		}
-		c.ratelimit.remaining = remainingI
+		fmt.Println("X-Ratelimit-Remaining:", remainingI)
+
+		// Add requests remaining to rateBucket
+		//for i := 0; i < remainingI; i++ {
+		//	c.rateBucket <- struct{}{}
+		//	fmt.Println("Added 1 to the rateBucket")
+		//}
+		if remainingI > 0 {
+			c.rateBucket <- struct{}{}
+		}
 	}
 	retry := resp.Header.Get("x-ratelimit-retry-after")
 	if retry != "" {
@@ -67,16 +83,28 @@ func (c *Client) updateRatelimit(resp *http.Response) error {
 		if err != nil {
 			return err
 		}
-		c.ratelimit.reset = time.Now().Add(time.Second * time.Duration(sec))
+		fmt.Println("X-Ratelimit-Retry-After:", sec)
+		//c.ratelimit.reset = time.Now().Add(time.Second * time.Duration(sec))
+
+		// Ratelimit-Retry-After only shows up when Ratelimit-Remaining hits 0
+		// Wait until next request is available and add it to the rateBucket
+		go func() {
+			time.Sleep(time.Duration(sec) * time.Second)
+			c.rateBucket <- struct{}{}
+		}()
 	}
 	return nil
 }
 
 func (c *Client) get(path string, params url.Values) (bytes []byte, err error) {
-	err = c.checkRatelimit()
-	if err != nil {
-		return
-	}
+	//	err = c.checkRatelimit()
+	//	if err != nil {
+	//		return
+	//	}
+	//
+
+	// take one request out of the rateBucket
+	<-c.rateBucket
 
 	path = baseURL + path
 	req, err := http.NewRequest("GET", path, nil)
