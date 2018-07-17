@@ -15,19 +15,3 @@ type APIError struct {
 func (err APIError) Error() string {
 	return err.Message
 }
-
-// RatelimitError is returned when it is detected that you will hit the ratelimit.
-type RatelimitError struct {
-	RetryAfter time.Duration
-}
-
-func (err RatelimitError) Error() string {
-	return fmt.Sprintf("ratelimit, retry in: %v", err.RetryAfter)
-}
-
-func newRatelimitError(retryAfter time.Duration) RatelimitError {
-	err := RatelimitError{
-		RetryAfter: retryAfter,
-	}
-	return err
-}
