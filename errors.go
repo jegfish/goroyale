@@ -1,10 +1,5 @@
 package goroyale
 
-import (
-	"fmt"
-	"time"
-)
-
 // APIError represents an error returned from the API.
 // https://docs.royaleapi.com/#/errors
 type APIError struct {
