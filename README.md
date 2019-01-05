@@ -1,13 +1,13 @@
 # goroyale
-[![GoDoc](https://godoc.org/github.com/Altarrel/goroyale?status.svg)](https://godoc.org/github.com/Altarrel/goroyale)
-[![Go report](https://goreportcard.com/badge/github.com/Altarrel/goroyale)](https://goreportcard.com/report/github.com/Altarrel/goroyale)
+[![GoDoc](https://godoc.org/github.com/jegfish/goroyale?status.svg)](https://godoc.org/github.com/jegfish/goroyale)
+[![Go report](https://goreportcard.com/badge/github.com/jegfish/goroyale)](https://goreportcard.com/report/github.com/jegfish/goroyale)
 
 A Golang wrapper for the Clash Royale API at https://royaleapi.com/.
 
 ## Installing
 If you have Go installed you can run this command.
 ```sh
-go get github.com/Altarrel/goroyale
+go get github.com/jegfish/goroyale
 ```
 
 ## Example
@@ -17,7 +17,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/Altarrel/goroyale"
+	"github.com/jegfish/goroyale"
 )
 
 var token = ""
