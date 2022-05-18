@@ -10,6 +10,9 @@ If you have Go installed you can run this command.
 go get github.com/jegfish/goroyale
 ```
 
+## Obtaining an Authentication Token
+To obtain a token, please refer to https://docs.royaleapi.com/#/authentication
+
 ## Example
 ```golang
 package main
